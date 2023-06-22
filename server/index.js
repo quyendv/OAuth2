@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import passport from 'passport';
+import './src/configs/passport.config.js'; // || import passportSetup from '...' -> using dotenv/config in that file
 import initRoutes from './src/routes/index.js';
 
 /** Config before app initializing app */
@@ -14,9 +15,6 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 /** app.use(middleware) */
-app.use(passport.initialize()); // khởi tạo authentication module
-app.use(passport.session()); // see more: https://stackoverflow.com/questions/22052258/what-does-passport-session-middleware-do/28994045#28994045
-
 app.use(
   cookieSession({
     name: 'session',
@@ -25,10 +23,30 @@ app.use(
   }),
 );
 
+app.use(passport.initialize()); // khởi tạo authentication module
+app.use(passport.session()); // see more: https://stackoverflow.com/questions/22052258/what-does-passport-session-middleware-do/28994045#28994045
+/**
+ * Khắc phục tạm thời lỗi "req.session.regenerate is not a function": https://github.com/jaredhanson/passport/issues/904#issuecomment-1307558283
+ * -> register regenerate & save after the cookieSession middleware initialization
+ */
+app.use(function (request, response, next) {
+  if (request.session && !request.session.regenerate) {
+    request.session.regenerate = (cb) => {
+      cb();
+    };
+  }
+  if (request.session && !request.session.save) {
+    request.session.save = (cb) => {
+      cb();
+    };
+  }
+  next();
+});
+
 app.use(
   cors({
-    // origin: [process.env.CLIENT_LOCAL, process.env.CLIENT_PRODUCT],
-    origin: '*',
+    origin: [process.env.CLIENT_LOCAL, process.env.CLIENT_PRODUCT],
+    credentials: true, // Determines whether the request contains authentication information (e.g., cookies, HTTP authentication) or not. In this case, credentials are set to true, allowing the request to include authentication information.
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }),
 );

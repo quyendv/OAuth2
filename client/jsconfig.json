@@ -1,8 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "checkJs": true,
+    "lib": ["esnext", "dom"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+
     "baseUrl": ".",
     "paths": {
       "~/*": ["src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
 }
