@@ -32,6 +32,17 @@ router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 router.get(
   '/google/callback',
   passport.authenticate('google', {
+    successRedirect: process.env.CLIENT_LOCAL, // FIXME: update all -> check NODE_ENV -> using CLIENT_LOCAL/PRODUCT
+    failureRedirect: '/signin/failed',
+  }),
+);
+
+/** Github Auth */
+router.get('/github', passport.authenticate('github', { scope: ['profile'] }));
+
+router.get(
+  '/github/callback',
+  passport.authenticate('github', {
     successRedirect: process.env.CLIENT_LOCAL,
     failureRedirect: '/signin/failed',
   }),
