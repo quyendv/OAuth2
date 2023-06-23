@@ -3,7 +3,6 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
-import passport from 'passport';
 import './src/configs/passport.config.js'; // || import passportSetup from '...' -> using dotenv/config in that file
 import initRoutes from './src/routes/index.js';
 
@@ -15,18 +14,20 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 /** app.use(middleware) */
+// Khởi tạo session support để sử dụng các phiên đăng nhập -> tương tự express-session nhưng cải tiến thêm cookie
 app.use(
   cookieSession({
     name: 'session',
-    keys: ['quin'],
+    keys: ['quin'], // FIXME: using secret key
     maxAge: 24 * 60 * 60 * 1000, // ms in a day
   }),
 );
 
-app.use(passport.initialize()); // khởi tạo authentication module
-app.use(passport.session()); // see more: https://stackoverflow.com/questions/22052258/what-does-passport-session-middleware-do/28994045#28994045
+// app.use(passport.initialize()); // khởi tạo authentication module. Từ v0.6.x là không cần thiết nữa, require for version < v0.4.x
+// app.use(passport.session()); // see more: https://stackoverflow.com/questions/22052258/what-does-passport-session-middleware-do/28994045#28994045 -> same middleware verifyToken -> using as verifySession (call serializeUser & deserializeUser)
+
 /**
- * Khắc phục tạm thời lỗi "req.session.regenerate is not a function": https://github.com/jaredhanson/passport/issues/904#issuecomment-1307558283
+ * Khắc phục tạm thời lỗi "req.session.regenerate is not a function" khi dùng session: https://github.com/jaredhanson/passport/issues/904#issuecomment-1307558283
  * -> register regenerate & save after the cookieSession middleware initialization
  */
 app.use(function (request, response, next) {

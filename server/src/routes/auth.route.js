@@ -3,6 +3,8 @@ import passport from 'passport';
 
 const router = Router();
 
+router.use(passport.session()); // see more: https://stackoverflow.com/questions/22052258/what-does-passport-session-middleware-do/28994045#28994045 -> same middleware verifyToken -> using as verifySession (call serializeUser & deserializeUser)
+
 // ~ getInfo api
 router.get('/signin/success', (req, res) => {
   if (req.user) {
