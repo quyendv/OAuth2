@@ -17,6 +17,13 @@ function Signin() {
     );
   };
 
+  const handleSignInWithFacebook = () => {
+    window.open(
+      `${import.meta.env.DEV ? import.meta.env.VITE_SERVER_DEV : import.meta.env.VITE_SERVER_PROD}/auth/facebook`, // or process.env.NODE_ENV === 'development' ? :
+      '_self',
+    );
+  };
+
   return (
     <div className="relative z-0 mx-auto w-full min-w-[300px] overflow-hidden rounded-xl bg-transparent p-8 shadow-2xl">
       {/* Decorate tag -> //FIXME: using pseudo element */}
@@ -102,7 +109,7 @@ function Signin() {
         <button type="button" onClick={handleSignInWithGoogle}>
           <GoogleLogo className="h-8 w-8 transition-all duration-300 hover:scale-125" />
         </button>
-        <button type="button">
+        <button type="button" onClick={handleSignInWithFacebook}>
           <FacebookLogo className="h-8 w-8 transition-all duration-300 hover:scale-125" />
         </button>
         <button type="button" onClick={handleSignInWithGithub}>

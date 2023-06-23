@@ -27,7 +27,7 @@ router.get('/signout', (req, res, next) => {
 });
 
 /** Google Auth */
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile'] })); // [email, profile, openid] -> see note
 
 router.get(
   '/google/callback',
@@ -43,6 +43,17 @@ router.get('/github', passport.authenticate('github', { scope: ['profile'] }));
 router.get(
   '/github/callback',
   passport.authenticate('github', {
+    successRedirect: process.env.CLIENT_LOCAL,
+    failureRedirect: '/signin/failed',
+  }),
+);
+
+/** Facebook Auth */
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] })); // [email, public_profile] not "profile" as in video -> see note
+
+router.get(
+  '/facebook/callback',
+  passport.authenticate('facebook', {
     successRedirect: process.env.CLIENT_LOCAL,
     failureRedirect: '/signin/failed',
   }),
